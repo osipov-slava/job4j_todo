@@ -4,10 +4,10 @@
 
 This application is typical TODO list with tasks and states 'done' or not yet
 There are Todo list page, possibility create, update, delete tasks, change status to 'done'
-There are filter by status
+There are filter by status. All pages accessible after user authorisation.
 
 ### Technologies 
-Spring Boot, Thymeleaf, Bootstrap, Liquibase, Hibernate, PostgreSQL, H2,
+Spring Boot, Thymeleaf, Bootstrap, Liquibase, Hibernate, PostgreSQL, H2, Lombok
 Mockito 
 
 ### Environment
@@ -30,3 +30,5 @@ Viacheslav Osipov
 ![Main page](screenshots/4.jpg)
 ![Main page](screenshots/5.jpg)
 ![Main page](screenshots/6.jpg)
+![Main page](screenshots/7.jpg)
+![Main page](screenshots/8.jpg)
