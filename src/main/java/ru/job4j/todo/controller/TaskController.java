@@ -39,13 +39,11 @@ public class TaskController {
 
     @PostMapping("/create")
     public String create(@ModelAttribute Task task, Model model) {
-        try {
-            taskService.create(task);
-            return "redirect:/tasks";
-        } catch (Exception exception) {
-            model.addAttribute("message", exception.getMessage());
+        if (taskService.create(task) == 0) {
+            model.addAttribute("message", "Creation task was unsuccessful!");
             return "errors/404";
         }
+        return "redirect:/tasks";
     }
 
     @GetMapping("/{id}")
@@ -61,17 +59,11 @@ public class TaskController {
 
     @PostMapping("/update")
     public String update(@ModelAttribute Task task, Model model) {
-        try {
-            var isUpdated = taskService.update(task.getId(), task);
-            if (!isUpdated) {
-                model.addAttribute("message", "Task with this Id not found!");
-                return "errors/404";
-            }
-            return "redirect:/tasks";
-        } catch (Exception exception) {
-            model.addAttribute("message", exception.getMessage());
+        if (!taskService.update(task.getId(), task)) {
+            model.addAttribute("message", "Update task was unsuccessful!");
             return "errors/404";
         }
+        return "redirect:/tasks";
     }
 
     @GetMapping("update/{id}")
@@ -87,24 +79,11 @@ public class TaskController {
 
     @GetMapping("/done/{id}")
     public String done(Model model, @PathVariable int id) {
-        var optional = taskService.findById(id);
-        if (optional.isEmpty()) {
+        if (!taskService.done(id)) {
             model.addAttribute("message", "Task with this Id not found!");
             return "errors/404";
         }
-        Task task = optional.get();
-        task.setDone(true);
-        try {
-            var isUpdated = taskService.update(task.getId(), task);
-            if (!isUpdated) {
-                model.addAttribute("message", "Task with this Id not found!");
-                return "errors/404";
-            }
-            return "redirect:/tasks";
-        } catch (Exception exception) {
-            model.addAttribute("message", exception.getMessage());
-            return "errors/404";
-        }
+        return "redirect:/tasks";
     }
 
     @GetMapping("/delete/{id}")

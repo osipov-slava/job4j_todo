@@ -1,6 +1,7 @@
 package ru.job4j.todo.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -9,7 +10,9 @@ import java.time.format.DateTimeFormatter;
 @Entity
 @Table(name = "tasks")
 @Data
+@EqualsAndHashCode(of = "id")
 public class Task {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -22,5 +25,4 @@ public class Task {
 
     private final LocalDateTime created = LocalDateTime.now();
 
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd-MMMM-EEEE-yyyy HH:mm:ss");
 }
