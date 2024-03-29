@@ -8,7 +8,6 @@ import ru.job4j.todo.model.Task;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -20,128 +19,138 @@ public class HbnTaskRepository implements TaskRepository {
     @Override
     public int create(Task task) {
         Session session = sf.openSession();
-        int result = 0;
         try {
             session.beginTransaction();
-            result = (int) session.save(task);
             session.getTransaction().commit();
+            return (int) session.save(task);
         } catch (Exception e) {
             session.getTransaction().rollback();
         } finally {
             session.close();
         }
-        return result;
+        return 0;
     }
 
     @Override
     public boolean update(int id, Task task) {
         Session session = sf.openSession();
-        boolean result = false;
         try {
             session.beginTransaction();
-            session.createQuery(
-                            "UPDATE Task SET title = :t, description = :d, done = :done WHERE id = :id")
-                    .setParameter("t", task.getTitle())
+            var query = session.createQuery("UPDATE Task SET title = :t, description = :d, done = :done WHERE id = :id");
+            query.setParameter("t", task.getTitle())
                     .setParameter("d", task.getDescription())
                     .setParameter("done", task.isDone())
-                    .setParameter("id", id)
-                    .executeUpdate();
+                    .setParameter("id", id);
+            var result = query.executeUpdate() > 0;
             session.getTransaction().commit();
-            result = true;
+            return result;
         } catch (Exception e) {
             session.getTransaction().rollback();
         } finally {
             session.close();
         }
-        return result;
+        return false;
+    }
+
+    @Override
+    public boolean done(int id) {
+        Session session = sf.openSession();
+        try {
+            session.beginTransaction();
+            var query = session.createQuery("UPDATE Task SET done = :done WHERE id = :id");
+            query.setParameter("id", id)
+                    .setParameter("done", true);
+            var result = query.executeUpdate() > 0;
+            session.getTransaction().commit();
+            return result;
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+        } finally {
+            session.close();
+        }
+        return false;
     }
 
     @Override
     public boolean deleteById(int id) {
         Session session = sf.openSession();
-        boolean result = false;
         try {
             session.beginTransaction();
-            session.createQuery(
-                            "DELETE Task WHERE id = :id")
-                    .setParameter("id", id)
-                    .executeUpdate();
+            var query = session.createQuery("DELETE Task WHERE id = :id");
+            query.setParameter("id", id);
+            var result = query.executeUpdate() > 0;
             session.getTransaction().commit();
-            result = true;
+            return result;
         } catch (Exception e) {
             session.getTransaction().rollback();
         } finally {
             session.close();
         }
-        return result;
+        return false;
     }
 
     @Override
     public Optional<Task> findById(int id) {
         Session session = sf.openSession();
-        Optional<Task> result = Optional.empty();
         try {
             session.beginTransaction();
-            var query = session.createQuery("from Task where id=:id", Task.class);
+            var query = session.createQuery("FROM Task WHERE id=:id");
             query.setParameter("id", id);
-            result = query.uniqueResultOptional();
             session.getTransaction().commit();
+            return query.uniqueResultOptional();
         } catch (Exception e) {
             session.getTransaction().rollback();
         } finally {
             session.close();
         }
-        return result;
+        return Optional.empty();
     }
 
     @Override
     public Collection<Task> findAll() {
         Session session = sf.openSession();
-        List<Task> userList = Collections.emptyList();
         try {
             session.beginTransaction();
-            var query = session.createQuery("from Task");
-            userList = query.list();
+            var query = session.createQuery("FROM Task ORDER BY id");
             session.getTransaction().commit();
+            return query.list();
         } catch (Exception e) {
             session.getTransaction().rollback();
         } finally {
             session.close();
         }
-        return userList;
+        return Collections.emptyList();
     }
 
     @Override
     public Collection<Task> findFinished() {
         Session session = sf.openSession();
-        List<Task> userList = Collections.emptyList();
         try {
             session.beginTransaction();
-            var query = session.createQuery("from Task where done = true");
-            userList = query.list();
+            var query = session.createQuery("FROM Task WHERE done = true");
             session.getTransaction().commit();
+            return query.list();
         } catch (Exception e) {
             session.getTransaction().rollback();
         } finally {
             session.close();
         }
-        return userList;
+        return Collections.emptyList();
     }
 
     @Override
     public Collection<Task> findInProgress() {
         Session session = sf.openSession();
-        List<Task> userList = Collections.emptyList();
         try {
             session.beginTransaction();
-            var query = session.createQuery("from Task where done = false");
-            userList = query.list();
+            var query = session.createQuery("FROM Task WHERE done = false");
             session.getTransaction().commit();
+            return query.list();
         } catch (Exception e) {
             session.getTransaction().rollback();
         } finally {
             session.close();
         }
-        return userList;
+        return Collections.emptyList();
     }
 }

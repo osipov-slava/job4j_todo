@@ -7,7 +7,7 @@
     <script th:src="@{/js/code.jquery.com_jquery-3.7.0.min.js}"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
 
-    <title>Todo</title>
+    <title th:text="${@environment.getProperty('app.title')}"></title>
 </head>
 
 <body>

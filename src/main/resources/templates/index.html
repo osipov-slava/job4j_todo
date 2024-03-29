@@ -7,7 +7,7 @@
     <script th:src="@{/js/code.jquery.com_jquery-3.7.0.min.js}"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
 
-    <title>Todo</title>
+    <title th:text="${@environment.getProperty('app.title')}"></title>
 </head>
 <body>
 <div class="container-fluid p-0">
@@ -21,9 +21,8 @@
             <li><a th:href="@{/tasks}">ToDo List</a></li>
         </ul>
         <p>In project used technologies: <b>Spring Boot, Thymeleaf, Bootstrap, Liquibase, Hibernate, PostgreSQL, H2,
-            Mockito, JaCoCo</b></p>
+            Mockito</b></p>
         <p>Patterns: <b>Model View Controller(MVC)</b></p>
-        <p>Code coverage 62%.</p>
     </div>
     <footer th:insert="blocks/footer :: footer"></footer>
 </div>
