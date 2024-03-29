@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
-public class HbmTaskRepository implements TaskRepository {
+public class HbnTaskRepository implements TaskRepository {
 
     private final SessionFactory sf;
 
@@ -40,9 +40,10 @@ public class HbmTaskRepository implements TaskRepository {
         try {
             session.beginTransaction();
             session.createQuery(
-                            "UPDATE Task SET title = :t description = :d WHERE id = :id")
-                    .setParameter("title", task.getTitle())
-                    .setParameter("description", task.getDescription())
+                            "UPDATE Task SET title = :t, description = :d, done = :done WHERE id = :id")
+                    .setParameter("t", task.getTitle())
+                    .setParameter("d", task.getDescription())
+                    .setParameter("done", task.isDone())
                     .setParameter("id", id)
                     .executeUpdate();
             session.getTransaction().commit();
@@ -100,6 +101,40 @@ public class HbmTaskRepository implements TaskRepository {
         try {
             session.beginTransaction();
             var query = session.createQuery("from Task");
+            userList = query.list();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+        } finally {
+            session.close();
+        }
+        return userList;
+    }
+
+    @Override
+    public Collection<Task> findFinished() {
+        Session session = sf.openSession();
+        List<Task> userList = Collections.emptyList();
+        try {
+            session.beginTransaction();
+            var query = session.createQuery("from Task where done = true");
+            userList = query.list();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+        } finally {
+            session.close();
+        }
+        return userList;
+    }
+
+    @Override
+    public Collection<Task> findInProgress() {
+        Session session = sf.openSession();
+        List<Task> userList = Collections.emptyList();
+        try {
+            session.beginTransaction();
+            var query = session.createQuery("from Task where done = false");
             userList = query.list();
             session.getTransaction().commit();
         } catch (Exception e) {
