@@ -3,7 +3,7 @@ package ru.job4j.todo.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.todo.model.User;
-import ru.job4j.todo.repository.UserRepository;
+import ru.job4j.todo.repository.HbnUserRepository;
 
 import java.util.Optional;
 
@@ -11,11 +11,11 @@ import java.util.Optional;
 @AllArgsConstructor
 public class SimpleUserService implements UserService {
 
-    private final UserRepository userRepository;
+    private final HbnUserRepository userRepository;
 
     @Override
-    public Optional<User> save(User user) {
-        return userRepository.save(user);
+    public User save(User user) {
+        return userRepository.create(user);
     }
 
     @Override

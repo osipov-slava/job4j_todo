@@ -2,16 +2,24 @@ package ru.job4j.todo.repository;
 
 import ru.job4j.todo.model.User;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository {
 
-    Optional<User> save(User user);
+    User create(User user);
+
+    List<User> findAllOrderById();
 
     Optional<User> findByEmailAndPassword(String email, String password);
 
-    Collection<User> findAll();
+    Optional<User> findById(int id);
 
-    boolean deleteById(int id);
+    Optional<User> findByLogin(String login);
+
+    List<User> findByLikeLogin(String key);
+
+    User update(User user);
+
+    boolean delete(int id);
 }

@@ -27,8 +27,8 @@ public class UserController {
 
     @PostMapping("/register")
     public String register(@ModelAttribute User user, Model model) {
-        var savedUser = userService.save(user);
-        if (savedUser.isEmpty()) {
+        user.setId(0);
+        if (userService.save(user).getId() == 0) {
             model.addAttribute("error", "User with this email is exist");
             return "users/register";
         }

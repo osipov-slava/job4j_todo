@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.repository.TaskRepository;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -15,13 +15,13 @@ public class ImplTaskService implements TaskService {
     private final TaskRepository taskRepository;
 
     @Override
-    public int create(Task task) {
+    public Task create(Task task) {
         return taskRepository.create(task);
     }
 
     @Override
     public boolean update(int id, Task task) {
-        return taskRepository.update(id, task);
+        return taskRepository.update(task);
     }
 
     @Override
@@ -40,17 +40,17 @@ public class ImplTaskService implements TaskService {
     }
 
     @Override
-    public Collection<Task> findAll() {
-        return taskRepository.findAll();
+    public List<Task> findAll() {
+        return taskRepository.findAllOrderById();
     }
 
     @Override
-    public Collection<Task> findFinished() {
-        return taskRepository.findFinished();
+    public List<Task> findFinished() {
+        return taskRepository.findFinishedOrderById();
     }
 
     @Override
-    public Collection<Task> findInProgress() {
-        return taskRepository.findInProgress();
+    public List<Task> findInProgress() {
+        return taskRepository.findInProgressOrderById();
     }
 }

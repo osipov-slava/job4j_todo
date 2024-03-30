@@ -39,7 +39,7 @@ public class TaskController {
 
     @PostMapping("/create")
     public String create(@ModelAttribute Task task, Model model) {
-        if (taskService.create(task) == 0) {
+        if (taskService.create(task).getId() == 0) {
             model.addAttribute("message", "Creation task was unsuccessful!");
             return "errors/404";
         }
