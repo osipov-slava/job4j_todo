@@ -25,6 +25,11 @@ public class ImplTaskService implements TaskService {
     }
 
     @Override
+    public boolean done(int id) {
+        return taskRepository.done(id);
+    }
+
+    @Override
     public boolean deleteById(int id) {
         return taskRepository.deleteById(id);
     }

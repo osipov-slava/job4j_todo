@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 @Data
 @EqualsAndHashCode(of = "id")
 public class Task {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -24,5 +25,4 @@ public class Task {
 
     private final LocalDateTime created = LocalDateTime.now();
 
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd-MMMM-EEEE-yyyy HH:mm:ss");
 }

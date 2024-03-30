@@ -36,44 +36,59 @@ public class HbnTaskRepository implements TaskRepository {
     @Override
     public boolean update(int id, Task task) {
         Session session = sf.openSession();
-        boolean result = false;
+        int result = 0;
         try {
             session.beginTransaction();
-            session.createQuery(
-                            "UPDATE Task SET title = :t, description = :d, done = :done WHERE id = :id")
-                    .setParameter("t", task.getTitle())
+            var query = session.createQuery("UPDATE Task SET title = :t, description = :d, done = :done WHERE id = :id");
+            query.setParameter("t", task.getTitle())
                     .setParameter("d", task.getDescription())
                     .setParameter("done", task.isDone())
-                    .setParameter("id", id)
-                    .executeUpdate();
+                    .setParameter("id", id);
+            result = query.executeUpdate();
             session.getTransaction().commit();
-            result = true;
         } catch (Exception e) {
             session.getTransaction().rollback();
         } finally {
             session.close();
         }
-        return result;
+        return (result > 0);
+    }
+
+    @Override
+    public boolean done(int id) {
+        Session session = sf.openSession();
+        int result = 0;
+        try {
+            session.beginTransaction();
+            var query = session.createQuery("UPDATE Task SET done = :done WHERE id = :id");
+            query.setParameter("id", id)
+                    .setParameter("done", true);
+            result = query.executeUpdate();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+        } finally {
+            session.close();
+        }
+        return (result > 0);
     }
 
     @Override
     public boolean deleteById(int id) {
         Session session = sf.openSession();
-        boolean result = false;
+        int result = 0;
         try {
             session.beginTransaction();
-            session.createQuery(
-                            "DELETE Task WHERE id = :id")
-                    .setParameter("id", id)
-                    .executeUpdate();
+            var query = session.createQuery("DELETE Task WHERE id = :id");
+            query.setParameter("id", id);
+            result = query.executeUpdate();
             session.getTransaction().commit();
-            result = true;
         } catch (Exception e) {
             session.getTransaction().rollback();
         } finally {
             session.close();
         }
-        return result;
+        return (result > 0);
     }
 
     @Override
@@ -82,7 +97,7 @@ public class HbnTaskRepository implements TaskRepository {
         Optional<Task> result = Optional.empty();
         try {
             session.beginTransaction();
-            var query = session.createQuery("from Task where id=:id", Task.class);
+            var query = session.createQuery("FROM Task WHERE id=:id");
             query.setParameter("id", id);
             result = query.uniqueResultOptional();
             session.getTransaction().commit();
@@ -100,7 +115,7 @@ public class HbnTaskRepository implements TaskRepository {
         List<Task> userList = Collections.emptyList();
         try {
             session.beginTransaction();
-            var query = session.createQuery("from Task");
+            var query = session.createQuery("FROM Task ORDER BY id");
             userList = query.list();
             session.getTransaction().commit();
         } catch (Exception e) {
@@ -117,7 +132,7 @@ public class HbnTaskRepository implements TaskRepository {
         List<Task> userList = Collections.emptyList();
         try {
             session.beginTransaction();
-            var query = session.createQuery("from Task where done = true");
+            var query = session.createQuery("FROM Task WHERE done = true");
             userList = query.list();
             session.getTransaction().commit();
         } catch (Exception e) {
@@ -134,7 +149,7 @@ public class HbnTaskRepository implements TaskRepository {
         List<Task> userList = Collections.emptyList();
         try {
             session.beginTransaction();
-            var query = session.createQuery("from Task where done = false");
+            var query = session.createQuery("FROM Task WHERE done = false");
             userList = query.list();
             session.getTransaction().commit();
         } catch (Exception e) {
