@@ -29,8 +29,8 @@ public class UserController {
     public String register(@ModelAttribute User user, Model model) {
         var savedUser = userService.save(user);
         if (savedUser.isEmpty()) {
-            model.addAttribute("message", "User with this email is exist");
-            return "errors/404";
+            model.addAttribute("error", "User with this email is exist");
+            return "users/register";
         }
         return "redirect:/tasks";
     }

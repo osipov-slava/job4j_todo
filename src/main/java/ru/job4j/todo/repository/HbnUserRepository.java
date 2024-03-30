@@ -8,7 +8,6 @@ import ru.job4j.todo.model.User;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -20,71 +19,65 @@ public class HbnUserRepository implements UserRepository {
     @Override
     public Optional<User> save(User user) {
         Session session = sf.openSession();
-        int result = 0;
         try {
             session.beginTransaction();
-            result = (int) session.save(user);
+            session.save(user);
             session.getTransaction().commit();
-            user.setId(result);
+            return Optional.of(user);
         } catch (Exception e) {
             session.getTransaction().rollback();
         } finally {
             session.close();
         }
-        return Optional.of(user);
+        return Optional.empty();
     }
 
     @Override
     public Optional<User> findByEmailAndPassword(String email, String password) {
         Session session = sf.openSession();
-        Optional<User> result = Optional.empty();
         try {
             session.beginTransaction();
-            var query = session.createQuery("FROM User WHERE (email = :email AND password = :password)");
-            query.setParameter("email", email);
-            query.setParameter("password", password);
-            result = query.uniqueResultOptional();
+            var query = session.createQuery("FROM User WHERE (email = :email AND password = :password)")
+                    .setParameter("email", email)
+                    .setParameter("password", password);
             session.getTransaction().commit();
+            return query.uniqueResultOptional();
         } catch (Exception e) {
             session.getTransaction().rollback();
         } finally {
             session.close();
         }
-        return result;
+        return Optional.empty();
     }
 
     public Collection<User> findAll() {
         Session session = sf.openSession();
-        List<User> userList = Collections.emptyList();
         try {
             session.beginTransaction();
-            var query = session.createQuery("from User");
-            userList = query.list();
+            var query = session.createQuery("FROM User");
             session.getTransaction().commit();
+            return query.list();
         } catch (Exception e) {
             session.getTransaction().rollback();
         } finally {
             session.close();
         }
-        return userList;
+        return Collections.emptyList();
     }
 
     public boolean deleteById(int id) {
         Session session = sf.openSession();
-        boolean result = false;
         try {
             session.beginTransaction();
-            session.createQuery(
-                            "DELETE User WHERE id = :id")
-                    .setParameter("id", id)
-                    .executeUpdate();
+            var query = session.createQuery("DELETE User WHERE id = :id")
+                    .setParameter("id", id);
             session.getTransaction().commit();
-            result = true;
+            return (query.executeUpdate() > 0);
         } catch (Exception e) {
             session.getTransaction().rollback();
         } finally {
             session.close();
         }
-        return result;
+        return false;
     }
 }
