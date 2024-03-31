@@ -30,6 +30,7 @@
                     <th class="col-8" scope="col">Task Title</th>
                     <th scope="col">Creation Date</th>
                     <th scope="col">Is Done</th>
+                    <th scope="col">Owner</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -44,6 +45,7 @@
                     <div class="d-flex" th:if="${task.done == true}">
                         <td class="text-success">Done</td>
                     </div>
+                    <td th:text="${task.user.name}"/>
                 </tr>
                 </tbody>
             </table>

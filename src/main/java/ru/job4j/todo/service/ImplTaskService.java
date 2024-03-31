@@ -3,6 +3,7 @@ package ru.job4j.todo.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.model.User;
 import ru.job4j.todo.repository.TaskRepository;
 
 import java.util.List;
@@ -25,32 +26,32 @@ public class ImplTaskService implements TaskService {
     }
 
     @Override
-    public boolean done(int id) {
-        return taskRepository.done(id);
+    public boolean done(int id, User user) {
+        return taskRepository.done(id, user);
     }
 
     @Override
-    public boolean deleteById(int id) {
-        return taskRepository.deleteById(id);
+    public boolean deleteById(int id, User user) {
+        return taskRepository.deleteById(id, user);
     }
 
     @Override
-    public Optional<Task> findById(int id) {
-        return taskRepository.findById(id);
+    public Optional<Task> findById(int id, User user) {
+        return taskRepository.findById(id, user);
     }
 
     @Override
-    public List<Task> findAll() {
-        return taskRepository.findAllOrderById();
+    public List<Task> findAll(User user) {
+        return taskRepository.findAllOrderById(user);
     }
 
     @Override
-    public List<Task> findFinished() {
-        return taskRepository.findFinishedOrderById();
+    public List<Task> findFinished(User user) {
+        return taskRepository.findFinishedOrderById(user);
     }
 
     @Override
-    public List<Task> findInProgress() {
-        return taskRepository.findInProgressOrderById();
+    public List<Task> findInProgress(User user) {
+        return taskRepository.findInProgressOrderById(user);
     }
 }

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.model.User;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,21 +29,12 @@ public class HbnTaskRepository implements TaskRepository {
     }
 
     @Override
-    public List<Task> findAllOrderById() {
-        try {
-            return crudRepository.query("FROM Task ORDER BY id ASC", Task.class);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
-        return Collections.emptyList();
-    }
-
-    @Override
-    public Optional<Task> findById(int id) {
+    public Optional<Task> findById(int id, User user) {
         try {
             return crudRepository.optional(
-                    "FROM Task where id = :id", Task.class,
-                    Map.of("id", id)
+                    "FROM Task WHERE id = :id AND todo_user = :user", Task.class,
+                    Map.of("id", id,
+                            "user", user.getId())
             );
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -51,9 +43,12 @@ public class HbnTaskRepository implements TaskRepository {
     }
 
     @Override
-    public List<Task> findFinishedOrderById() {
+    public List<Task> findAllOrderById(User user) {
         try {
-            return crudRepository.query("FROM Task WHERE done = true ORDER BY id ASC", Task.class);
+            return crudRepository.query(
+                    "FROM Task WHERE todo_user = :user ORDER BY id ASC", Task.class,
+                    Map.of("user", user.getId())
+            );
         } catch (Exception e) {
             log.error(e.getMessage());
         }
@@ -61,9 +56,25 @@ public class HbnTaskRepository implements TaskRepository {
     }
 
     @Override
-    public List<Task> findInProgressOrderById() {
+    public List<Task> findFinishedOrderById(User user) {
         try {
-            return crudRepository.query("FROM Task WHERE done = false ORDER BY id ASC", Task.class);
+            return crudRepository.query(
+                    "FROM Task WHERE done = true AND todo_user = :user ORDER BY id ASC", Task.class,
+                    Map.of("user", user.getId())
+            );
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<Task> findInProgressOrderById(User user) {
+        try {
+            return crudRepository.query(
+                    "FROM Task WHERE done = false AND todo_user = :user ORDER BY id ASC", Task.class,
+                    Map.of("user", user.getId())
+            );
         } catch (Exception e) {
             log.error(e.getMessage());
         }
@@ -82,12 +93,13 @@ public class HbnTaskRepository implements TaskRepository {
     }
 
     @Override
-    public boolean done(int id) {
+    public boolean done(int id, User user) {
         try {
             var result = crudRepository.run(
-                    "UPDATE Task SET done = :done WHERE id = :id",
+                    "UPDATE Task SET done = :done WHERE id = :id AND todo_user = :user",
                     Map.of("id", id,
-                            "done", true)
+                            "done", true,
+                            "user", user.getId())
             );
             return result > 0;
         } catch (Exception e) {
@@ -97,11 +109,12 @@ public class HbnTaskRepository implements TaskRepository {
     }
 
     @Override
-    public boolean deleteById(int id) {
+    public boolean deleteById(int id, User user) {
         try {
             var result = crudRepository.run(
-                    "DELETE Task WHERE id = :id",
-                    Map.of("id", id)
+                    "DELETE Task WHERE id = :id AND todo_user = :user",
+                    Map.of("id", id,
+                            "user", user.getId())
             );
             return result > 0;
         } catch (Exception e) {

@@ -5,30 +5,32 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.TaskService;
 
 @Controller
 @RequestMapping("/tasks")
 @AllArgsConstructor
+@SessionAttributes("user")
 public class TaskController {
 
     private final TaskService taskService;
 
     @GetMapping({"", "/filter/all"})
-    public String getAll(Model model) {
-        model.addAttribute("tasks", taskService.findAll());
+    public String getAll(Model model, @SessionAttribute User user) {
+        model.addAttribute("tasks", taskService.findAll(user));
         return "tasks/list";
     }
 
     @GetMapping("/filter/finished")
-    public String getFinished(Model model) {
-        model.addAttribute("tasks", taskService.findFinished());
+    public String getFinished(Model model, @SessionAttribute User user) {
+        model.addAttribute("tasks", taskService.findFinished(user));
         return "tasks/list";
     }
 
     @GetMapping("/filter/inprogress")
-    public String getInProgress(Model model) {
-        model.addAttribute("tasks", taskService.findInProgress());
+    public String getInProgress(Model model, @SessionAttribute User user) {
+        model.addAttribute("tasks", taskService.findInProgress(user));
         return "tasks/list";
     }
 
@@ -38,7 +40,8 @@ public class TaskController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute Task task, Model model) {
+    public String create(@ModelAttribute Task task, Model model, @SessionAttribute User user) {
+        task.setUser(user);
         if (taskService.create(task).getId() == 0) {
             model.addAttribute("message", "Creation task was unsuccessful!");
             return "errors/404";
@@ -47,8 +50,8 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public String getById(Model model, @PathVariable int id) {
-        var taskOptional = taskService.findById(id);
+    public String getById(Model model, @PathVariable int id, @SessionAttribute User user) {
+        var taskOptional = taskService.findById(id, user);
         if (taskOptional.isEmpty()) {
             model.addAttribute("message", "Task with this Id not found!");
             return "errors/404";
@@ -67,8 +70,8 @@ public class TaskController {
     }
 
     @GetMapping("update/{id}")
-    public String editById(Model model, @PathVariable int id) {
-        var optional = taskService.findById(id);
+    public String editById(Model model, @PathVariable int id, @SessionAttribute User user) {
+        var optional = taskService.findById(id, user);
         if (optional.isEmpty()) {
             model.addAttribute("message", "Task with this Id not found!");
             return "errors/404";
@@ -78,8 +81,8 @@ public class TaskController {
     }
 
     @GetMapping("/done/{id}")
-    public String done(Model model, @PathVariable int id) {
-        if (!taskService.done(id)) {
+    public String done(Model model, @PathVariable int id, @SessionAttribute User user) {
+        if (!taskService.done(id, user)) {
             model.addAttribute("message", "Task with this Id not found!");
             return "errors/404";
         }
@@ -87,8 +90,8 @@ public class TaskController {
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(Model model, @PathVariable int id) {
-        var isDeleted = taskService.deleteById(id);
+    public String delete(Model model, @PathVariable int id, @SessionAttribute User user) {
+        var isDeleted = taskService.deleteById(id, user);
         if (!isDeleted) {
             model.addAttribute("message", "Task with this Id not found!");
             return "errors/404";
