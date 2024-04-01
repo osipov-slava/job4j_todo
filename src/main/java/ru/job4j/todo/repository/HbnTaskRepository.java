@@ -31,8 +31,9 @@ public class HbnTaskRepository implements TaskRepository {
     @Override
     public Optional<Task> findById(int id, User user) {
         try {
-            return crudRepository.optional(
-                    "FROM Task WHERE id = :id AND todo_user = :user", Task.class,
+            return crudRepository.optional("""
+                            FROM Task f JOIN FETCH f.priority 
+                            WHERE f.id = :id AND todo_user = :user""", Task.class,
                     Map.of("id", id,
                             "user", user.getId())
             );
@@ -45,8 +46,10 @@ public class HbnTaskRepository implements TaskRepository {
     @Override
     public List<Task> findAllOrderById(User user) {
         try {
-            return crudRepository.query(
-                    "FROM Task WHERE todo_user = :user ORDER BY id ASC", Task.class,
+            return crudRepository.query("""
+                            FROM Task f JOIN FETCH f.priority 
+                            WHERE todo_user = :user 
+                            ORDER BY f.id ASC""", Task.class,
                     Map.of("user", user.getId())
             );
         } catch (Exception e) {
@@ -58,8 +61,10 @@ public class HbnTaskRepository implements TaskRepository {
     @Override
     public List<Task> findFinishedOrderById(User user) {
         try {
-            return crudRepository.query(
-                    "FROM Task WHERE done = true AND todo_user = :user ORDER BY id ASC", Task.class,
+            return crudRepository.query("""
+                            FROM Task f JOIN FETCH f.priority 
+                            WHERE done = true AND todo_user = :user 
+                            ORDER BY f.id ASC""", Task.class,
                     Map.of("user", user.getId())
             );
         } catch (Exception e) {
@@ -71,8 +76,10 @@ public class HbnTaskRepository implements TaskRepository {
     @Override
     public List<Task> findInProgressOrderById(User user) {
         try {
-            return crudRepository.query(
-                    "FROM Task WHERE done = false AND todo_user = :user ORDER BY id ASC", Task.class,
+            return crudRepository.query("""
+                            FROM Task f JOIN FETCH f.priority 
+                            WHERE done = false AND todo_user = :user 
+                            ORDER BY f.id ASC""", Task.class,
                     Map.of("user", user.getId())
             );
         } catch (Exception e) {
