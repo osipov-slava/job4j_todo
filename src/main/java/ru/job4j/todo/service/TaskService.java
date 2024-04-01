@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface TaskService {
 
-    Task create(Task task);
+    Task create(Task task, User user);
 
     boolean update(int id, Task task);
 

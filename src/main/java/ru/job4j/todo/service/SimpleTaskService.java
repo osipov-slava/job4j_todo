@@ -11,12 +11,13 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class ImplTaskService implements TaskService {
+public class SimpleTaskService implements TaskService {
 
     private final TaskRepository taskRepository;
 
     @Override
-    public Task create(Task task) {
+    public Task create(Task task, User user) {
+        task.setUser(user);
         return taskRepository.create(task);
     }
 
