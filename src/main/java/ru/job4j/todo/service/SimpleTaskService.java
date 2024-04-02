@@ -18,18 +18,22 @@ public class SimpleTaskService implements TaskService {
 
     private final PriorityService priorityService;
 
+    private final CategoryService categoryService;
+
     @Override
-    public Task create(Task task, User user) {
+    public Task create(Task task, User user, List<Integer> categoryIds) {
         task.setUser(user);
-        Priority priority = priorityService.findAll().stream()
-                .filter(item -> item.getId() == task.getPriority().getId())
-                .findAny().get();
+
+        Priority priority = priorityService.getAllMap().get(task.getPriority().getId());
         task.setPriority(priority);
+
+        task.setCategories(categoryService.getListFromIds(categoryIds));
         return taskRepository.create(task);
     }
 
     @Override
-    public boolean update(int id, Task task) {
+    public boolean update(int id, Task task, List<Integer> categoryIds) {
+        task.setCategories(categoryService.getListFromIds(categoryIds));
         return taskRepository.update(task);
     }
 
@@ -62,4 +66,5 @@ public class SimpleTaskService implements TaskService {
     public List<Task> findInProgress(User user) {
         return taskRepository.findInProgressOrderById(user);
     }
+
 }

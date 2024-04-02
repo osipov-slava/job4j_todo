@@ -26,6 +26,7 @@
                     <th scope="col">Creation Date</th>
                     <th scope="col">Is Done</th>
                     <th scope="col">Priority</th>
+                    <th scope="col">Category</th>
                     <th scope="col">Owner</th>
                 </tr>
                 </thead>
@@ -47,6 +48,11 @@
                     <span class="d-flex" th:if="${task.priority.position != 1}">
                         <td class="text-success" th:text="${task.priority.name}"/>
                     </span>
+                    <td>
+                        <span th:each="category: ${task.categories}">
+                            <p th:text="${category.name}"></p>
+                        </span>
+                    </td>
                     <td th:text="${task.user.name}"/>
                 </tr>
                 </tbody>
