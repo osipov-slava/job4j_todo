@@ -72,17 +72,6 @@ public class TaskController {
         return "tasks/one";
     }
 
-    @PostMapping("/update")
-    public String update(@ModelAttribute Task task,
-                         @RequestParam(value = "category.id") List<Integer> categoryIds,
-                         Model model) {
-        if (!taskService.update(task.getId(), task, categoryIds)) {
-            model.addAttribute("message", "Update task was unsuccessful!");
-            return "errors/404";
-        }
-        return "redirect:/tasks";
-    }
-
     @GetMapping("update/{id}")
     public String editById(Model model, @PathVariable int id, @SessionAttribute User user) {
         model.addAttribute("priorities", priorityService.findAll());
@@ -94,6 +83,17 @@ public class TaskController {
         }
         model.addAttribute("task", optional.get());
         return "tasks/edit";
+    }
+
+    @PostMapping("/update")
+    public String update(@ModelAttribute Task task,
+                         @RequestParam(value = "category.id") List<Integer> categoryIds,
+                         Model model) {
+        if (!taskService.update(task.getId(), task, categoryIds)) {
+            model.addAttribute("message", "Update task was unsuccessful!");
+            return "errors/404";
+        }
+        return "redirect:/tasks";
     }
 
     @GetMapping("/done/{id}")

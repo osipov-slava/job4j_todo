@@ -3,9 +3,13 @@ package ru.job4j.todo.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.EqualsAndHashCode.Include;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +30,8 @@ public class Task {
 
     private boolean done;
 
-    private final LocalDateTime created = LocalDateTime.now();
+    private LocalDateTime created = LocalDateTime.now(ZoneId.of("UTC"))
+            .truncatedTo(ChronoUnit.SECONDS);
 
     @ManyToOne
     @JoinColumn(name = "todo_user")
@@ -36,7 +41,8 @@ public class Task {
     @JoinColumn(name = "priority_id")
     private Priority priority;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
+    @Fetch(FetchMode.SUBSELECT)
     @JoinTable(
             name = "junc_tasks_categories",
             joinColumns = {@JoinColumn(name = "task_id", referencedColumnName = "id")},

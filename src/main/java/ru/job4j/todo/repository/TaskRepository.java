@@ -10,13 +10,13 @@ public interface TaskRepository {
 
     Task create(Task task);
 
-    List<Task> findAllOrderById(User user);
+    List<Task> findAllOrderById(User user, List<Integer> categoryIds);
 
     Optional<Task> findById(int id, User user);
 
-    List<Task> findFinishedOrderById(User user);
+    List<Task> findFinishedOrderById(User user, List<Integer> categoryIds);
 
-    List<Task> findInProgressOrderById(User user);
+    List<Task> findInProgressOrderById(User user, List<Integer> categoryIds);
 
     boolean update(Task task);
 

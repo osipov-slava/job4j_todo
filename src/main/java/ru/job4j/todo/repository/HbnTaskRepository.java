@@ -32,7 +32,9 @@ public class HbnTaskRepository implements TaskRepository {
     public Optional<Task> findById(int id, User user) {
         try {
             return crudRepository.optional("""
-                            FROM Task f JOIN FETCH f.priority 
+                            FROM Task f
+                            JOIN FETCH f.priority
+                            JOIN FETCH f.categories c
                             WHERE f.id = :id AND todo_user = :user""", Task.class,
                     Map.of("id", id,
                             "user", user.getId())
@@ -44,13 +46,17 @@ public class HbnTaskRepository implements TaskRepository {
     }
 
     @Override
-    public List<Task> findAllOrderById(User user) {
+    public List<Task> findAllOrderById(User user, List<Integer> categoryIds) {
         try {
             return crudRepository.query("""
-                            FROM Task f JOIN FETCH f.priority 
-                            WHERE todo_user = :user 
+                            SELECT DISTINCT f
+                            FROM Task f
+                            JOIN FETCH f.priority
+                            JOIN FETCH f.categories c
+                            WHERE c.id IN (:categoryIds) AND todo_user = :user
                             ORDER BY f.id ASC""", Task.class,
-                    Map.of("user", user.getId())
+                    Map.of("user", user.getId(),
+                            "categoryIds", categoryIds)
             );
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -59,13 +65,16 @@ public class HbnTaskRepository implements TaskRepository {
     }
 
     @Override
-    public List<Task> findFinishedOrderById(User user) {
+    public List<Task> findFinishedOrderById(User user, List<Integer> categoryIds) {
         try {
             return crudRepository.query("""
-                            FROM Task f JOIN FETCH f.priority 
-                            WHERE done = true AND todo_user = :user 
+                            FROM Task f
+                            JOIN FETCH f.priority
+                            JOIN FETCH f.categories c
+                            WHERE c.id IN (:categoryIds) AND done = true AND todo_user = :user
                             ORDER BY f.id ASC""", Task.class,
-                    Map.of("user", user.getId())
+                    Map.of("user", user.getId(),
+                            "categoryIds", categoryIds)
             );
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -74,13 +83,16 @@ public class HbnTaskRepository implements TaskRepository {
     }
 
     @Override
-    public List<Task> findInProgressOrderById(User user) {
+    public List<Task> findInProgressOrderById(User user, List<Integer> categoryIds) {
         try {
             return crudRepository.query("""
-                            FROM Task f JOIN FETCH f.priority 
-                            WHERE done = false AND todo_user = :user 
+                            FROM Task f
+                            JOIN FETCH f.priority
+                            JOIN FETCH f.categories c
+                            WHERE c.id IN (:categoryIds) AND done = false AND todo_user = :user
                             ORDER BY f.id ASC""", Task.class,
-                    Map.of("user", user.getId())
+                    Map.of("user", user.getId(),
+                            "categoryIds", categoryIds)
             );
         } catch (Exception e) {
             log.error(e.getMessage());
