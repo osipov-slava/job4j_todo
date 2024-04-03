@@ -32,10 +32,12 @@ public class HbnTaskRepository implements TaskRepository {
     public Optional<Task> findById(int id, User user) {
         try {
             return crudRepository.optional("""
-                            FROM Task f JOIN FETCH f.priority
+                            FROM Task f
+                            JOIN FETCH f.priority
+                            JOIN FETCH f.categories
                             WHERE f.id = :id AND todo_user = :user""", Task.class,
                     Map.of("id", id,
-                            "user", user.getId())
+                           "user", user.getId())
             );
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -47,7 +49,10 @@ public class HbnTaskRepository implements TaskRepository {
     public List<Task> findAllOrderById(User user) {
         try {
             return crudRepository.query("""
-                            FROM Task f JOIN FETCH f.priority
+                            SELECT DISTINCT f
+                            FROM Task f
+                            JOIN FETCH f.priority
+                            JOIN FETCH f.categories
                             WHERE todo_user = :user
                             ORDER BY f.id ASC""", Task.class,
                     Map.of("user", user.getId())
@@ -62,7 +67,10 @@ public class HbnTaskRepository implements TaskRepository {
     public List<Task> findFinishedOrderById(User user) {
         try {
             return crudRepository.query("""
-                            FROM Task f JOIN FETCH f.priority
+                            SELECT DISTINCT f
+                            FROM Task f
+                            JOIN FETCH f.priority
+                            JOIN FETCH f.categories
                             WHERE done = true AND todo_user = :user
                             ORDER BY f.id ASC""", Task.class,
                     Map.of("user", user.getId())
@@ -77,7 +85,10 @@ public class HbnTaskRepository implements TaskRepository {
     public List<Task> findInProgressOrderById(User user) {
         try {
             return crudRepository.query("""
-                            FROM Task f JOIN FETCH f.priority
+                            SELECT DISTINCT f
+                            FROM Task f
+                            JOIN FETCH f.priority
+                            JOIN FETCH f.categories
                             WHERE done = false AND todo_user = :user
                             ORDER BY f.id ASC""", Task.class,
                     Map.of("user", user.getId())

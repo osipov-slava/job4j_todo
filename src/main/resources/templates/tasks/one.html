@@ -20,7 +20,26 @@
                 <p th:text="${task.description}"></p>
                 <p th:text="${#temporals.format(task.created, 'dd MMMM yyyy, HH:mm')}">
                 <p/>
-                <p th:text="${task.done}"></p>
+                <div>
+                    <span class="d-flex text-warning"
+                          th:if="${task.done == false}">In Progress
+                    </span>
+                    <span class="d-flex text-success"
+                          th:if="${task.done == true}">Done
+                    </span>
+                </div>
+                <div>
+                    <span class="d-flex text-danger"
+                          th:if="${task.priority.position == 1}"
+                          th:text="${task.priority.name}"></span>
+                    <span class="d-flex text-success"
+                          th:if="${task.priority.position != 1}"
+                          th:text="${task.priority.name}"></span>
+                </div>
+                <p>Categories:</p>
+                <span th:each="category: ${task.categories}">
+                    <p th:text="${category.name}"></p>
+                </span>
             </div>
         </div>
         <div class="row">
