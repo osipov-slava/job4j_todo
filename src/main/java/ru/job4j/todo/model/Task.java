@@ -8,6 +8,8 @@ import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +30,8 @@ public class Task {
 
     private boolean done;
 
-    private final LocalDateTime created = LocalDateTime.now();
+    private LocalDateTime created = LocalDateTime.now(ZoneId.of("UTC"))
+            .truncatedTo(ChronoUnit.SECONDS);
 
     @ManyToOne
     @JoinColumn(name = "todo_user")

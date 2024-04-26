@@ -8,6 +8,4 @@ public interface CategoryService {
 
     List<Category> findAll();
 
-    List<Category> findByListIds(List<Integer> categoryIds);
-
 }
